@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEXUS ARCADE - 7M</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080808;color:#fff;font-family:'Space Mono', monospace;min-height:100vh;padding:15px}
+header{display:flex;justify-content:space-between;align-items:center;max-width:1000px;margin:0 auto 20px auto;border-bottom:3px solid #ffe600;padding-bottom:15px}
+.logo{font-family:'Anton',sans-serif;font-size:38px;letter-spacing:2px;line-height:0.9}
+.logo span{color:#ffe600}
+.logo small{display:block;font-family:'Space Mono';font-size:11px;letter-spacing:4px;opacity:0.6;margin-top:4px}
+.saldo{background:#ffe600;color:#000;padding:8px 14px;border-radius:6px;font-weight:700;font-size:13px}
+.saldo b{font-size:18px}
+
+.grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
+
+.card{
+ background:#111;border:2px solid #222;border-radius:16px;padding:15px;
+ position:relative;overflow:hidden;cursor:pointer;transition:0.15s;
+ display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-4px);border-color:#fff}
+.card.activa{border-color:#ffe600;box-shadow:0 0 0 3px #ffe60030}
+.card.proximamente{opacity:0.5;cursor:not-allowed;border-style:dashed}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tag{font-size:9px;padding:3px 8px;border-radius:20px;background:#fff;color:#000;font-weight:700;letter-spacing:1px}
+.tag.live{background:#00ff88}
+.tag.new{background:#ffe600}
+.tag.lock{background:#333;color:#888}
+
+.icono{
+ width:100%;height:140px;background:#0a0a0a;border-radius:12px;
+ display:flex;align-items:center;justify-content:center;
+ font-size:60px;margin-bottom:12px;border:1px solid #1a1a1a;
+ position:relative;
+}
+.card.activa .icono{background:radial-gradient(circle at center,#1a4a2a,#0a0a0a)}
+
+.titulo{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:4px}
+.desc{font-size:11px;opacity:0.6;line-height:1.4;margin-bottom:12px;min-height:32px}
+
+.stats{display:flex;gap:8px;margin-top:auto}
+.stat{flex:1;background:#0a0a0a;border-radius:8px;padding:6px 8px;font-size:10px;border:1px solid #1f1f1f}
+.stat b{display:block;font-size:14px;color:#ffe600}
+
+.btn{
+ margin-top:12px;width:100%;padding:12px;background:#fff;color:#000;
+ border:none;border-radius:8px;font-weight:900;letter-spacing:1px;cursor:pointer;font-family:'Space Mono'
+}
+.btn:hover{background:#ffe600}
+.card.proximamente .btn{background:#222;color:#555}
+
+footer{max-width:1000px;margin:30px auto 0 auto;text-align:center;opacity:0.3;font-size:10px;letter-spacing:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ZEXUS<br><span>ARCADE</span><small>7M DE A 5 - VALLADOLID</small></div>
+  <div class="saldo">SALDO<br><b id="saldo">$0</b></div>
+</header>
+
+<div class="grid">
+
+  <!-- JUEGO 1 - DOMINO -->
+  <div class="card activa" onclick="location.href='domino.html'">
+    <div class="top"><span class="tag live">● EN VIVO</span><span class="tag">2 JUGADORES</span></div>
+    <div class="icono">🁏</div>
+    <div class="titulo">DOMINO ZEXUS</div>
+    <div class="desc">Con conteo de puntos, pozo para robar y bot. Primero en 100 gana. Pegue real.</div>
+    <div class="stats">
+      <div class="stat">RECORD <b id="recordDomino">0 pts</b></div>
+      <div class="stat">PARTIDAS <b id="partidasDomino">0</b></div>
+    </div>
+    <button class="btn">JUGAR AHORA →</button>
+  </div>
+<div class="card activa" onclick="location.href='loteria.html'">
+  <div class="top"><span class="tag live">● EN VIVO</span><span class="tag">LIVE CANTADOR</span></div>
+  <div class="icono">🌙</div>
+  <div class="titulo">LOTERIA MEXICANA</div>
+  <div class="desc">Cantador automático, 2 bots, tabla de 16. ¡Lotería de $5!</div>
+  <div class="stats">
+    <div class="stat">GANADAS <b>0</b></div>
+    <div class="stat">TIPO <b>16/54</b></div>
+  </div>
+  <button class="btn">JUGAR AHORA →</button>
+</div>
+  <!-- JUEGO 2 - SLOT PARA SIGUIENTE -->
+  <div class="card" onclick="agregarJuego()">
+    <div class="top"><span class="tag new">+ NUEVO SLOT</span></div>
+    <div class="icono" style="border:2px dashed #ffe600;color:#ffe600">+</div>
+    <div class="titulo">AGREGAR JUEGO</div>
+    <div class="desc">Clickea aquí para crear tu próximo juego. Lotería, Baraja, Damas, etc.</div>
+    <button class="btn" style="background:#ffe600">+ CREAR JUEGO</button>
+  </div>
+
+  <!-- PROXIMAMENTE -->
+  <div class="card proximamente">
+    <div class="top"><span class="tag lock">🔒 PRÓXIMAMENTE</span></div>
+    <div class="icono">🎰</div>
+    <div class="titulo">TRAGAMONEDAS 7M</div>
+    <div class="desc">La maquina de 7M con jackpot progresivo.</div>
+    <div class="stats">
+      <div class="stat">JACKPOT <b>$0</b></div>
+      <div class="stat">ESTADO <b>BLOQ</b></div>
+    </div>
+    <button class="btn">BLOQUEADO</button>
+  </div>
+
+  <div class="card proximamente">
+    <div class="top"><span class="tag lock">🔒 PRÓXIMAMENTE</span></div>
+    <div class="icono">♠️</div>
+    <div class="titulo">BARAJA - CONQUIAN</div>
+    <div class="desc">Conquian de 2, roba y tira. De a $5 la caída.</div>
+    <button class="btn">BLOQUEADO</button>
+  </div>
+
+  <div class="card proximamente">
+    <div class="top"><span class="tag lock">🔒 PRÓXIMAMENTE</span></div>
+    <div class="icono">🎯</div>
+    <div class="titulo">DARDOS 7M</div>
+    <div class="desc">501, cricket y 7M. Puntería pura.</div>
+    <button class="btn">BLOQUEADO</button>
+  </div>
+
+  <div class="card proximamente">
+    <div class="top"><span class="tag lock">🔒 PRÓXIMAMENTE</span></div>
+    <div class="icono">⚽</div>
+    <div class="titulo">PENALES</div>
+    <div class="desc">Tira 5 penales, apuesta 7M.</div>
+    <button class="btn">BLOQUEADO</button>
+  </div>
+
+</div>
+
+<footer>ZEXUS ARCADE © 2026 - HECHO EN VALLADOLID, YUC. - 7M DE A 5</footer>
+
+<script>
+// Cargar stats del localStorage si existen
+let stats = JSON.parse(localStorage.getItem('zexusStats') || '{"domino":{"record":0,"partidas":0},"saldo":0}');
+document.getElementById('recordDomino').textContent = stats.domino.record + ' pts';
+document.getElementById('partidasDomino').textContent = stats.domino.partidas;
+document.getElementById('saldo').textContent = '$' + stats.saldo;
+
+function agregarJuego(){
+  let nombre = prompt('¿Cómo se va a llamar el nuevo juego? Ej: LOTERIA');
+  if(!nombre) return;
+  let archivo = prompt('Nombre del archivo? Ej: loteria.html','loteria.html');
+  if(!archivo) return;
+  alert('Va. Crea el archivo '+archivo+' y luego lo agrego al menú automáticamente. Por ahora te abro una plantilla.');
+  // plantilla rápida
+  let plantilla = `<!DOCTYPE html><html><body><h1>${nombre}</h1><p>Juego nuevo Zexus</p><a href="index.html">Volver al menú</a></body></html>`;
+  console.log(plantilla);
+}
+</script>
+</body>
+</html>

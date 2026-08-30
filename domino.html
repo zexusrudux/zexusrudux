@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOMINO ZEXUS - CON PUNTOS</title>
+<style>
+ body{background:#0a3d1f;margin:0;display:flex;flex-direction:column;align-items:center;padding:10px;font-family:monospace;color:#fff}
+ h1{margin:5px 0 2px 0;font-family:Arial Black;letter-spacing:1px}
+ #marcador{display:flex;gap:15px;margin-top:8px}
+.scoreBox{background:#000;padding:8px 16px;border-radius:10px;text-align:center;border:2px solid #fff3}
+.scoreBox.yo{border-color:#ffe600}.scoreBox.bot{border-color:#ff0040}
+.scoreBox b{font-size:20px;display:block}
+ #contenedorMesa{
+  width:98%;max-width:900px;height:160px;
+  background:#0f6a32;border:10px solid #3d1f00;border-radius:18px;
+  display:flex;align-items:center;position:relative;overflow:hidden;margin-top:10px;
+ }
+ #mesa{display:flex;align-items:center;justify-content:flex-start;gap:0;padding:0 15px;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;cursor:grab}
+ #mesa.vacia{justify-content:center;color:#fff7;font-size:12px}
+.ficha{background:#fefefe;border-radius:8px;border:2.5px solid #111;box-shadow:0 3px 0 #000;flex-shrink:0;display:flex;position:relative}
+.mitad{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:5px;place-items:center}
+.punto{width:9px;height:9px;background:#111;border-radius:50%}.punto.escondido{opacity:0}
+.ficha.mano{width:62px;height:100px;flex-direction:column;transition:0.12s;cursor:pointer}
+.ficha.mano.mitad:first-child{border-bottom:3.5px solid #111}
+.ficha.mano.sel{transform:translateY(-12px);box-shadow:0 0 0 4px #ff0040,0 3px 0 #000;z-index:10}
+.ficha.mesa.doble{width:60px;height:96px;flex-direction:column;margin:0 -1px;z-index:2;border:3px solid #ffe600}
+.ficha.mesa.doble.mitad:first-child{border-bottom:3.5px solid #111}
+.ficha.mesa.normal{width:96px;height:58px;flex-direction:row;margin:0 -1px}
+.ficha.mesa.normal.mitad:first-child{border-right:3.5px solid #111}
+ #pozo{width:62px;height:100px;background:#111;border:2px dashed #fff3;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-left:10px;z-index:5}
+ #mano,#botArea{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px;max-width:750px}
+.ficha.bot{width:36px;height:55px;background:#222;border-color:#000;opacity:0.7}
+.info{background:#000;padding:6px 12px;border-radius:20px;font-size:11px;margin-top:8px;text-align:center}
+.btn{margin-top:10px;padding:10px 20px;background:#fff;color:#000;border:none;font-weight:900;cursor:pointer;border-radius:5px}
+.turno{font-size:11px;letter-spacing:2px;padding:5px 12px;background:#ffe600;color:#000;font-weight:bold;border-radius:4px;margin-top:5px}
+</style>
+</head>
+<body>
+  <!-- ANUNCIO STICKY A-ADS 2453787 - INICIO -->
+<div style="position: absolute; z-index: 99999">
+  <input autocomplete="off" type="checkbox" id="aadsstickymtex018s" hidden />
+  <div>
+    <div style="width:100%;height:auto;position:fixed;text-align:center;top:0;left:0;right:0;margin:auto; background:#0f0f0f; padding:8px 40px 8px 5px; border-bottom:1px solid #222; z-index:99999">
+      <label for="aadsstickymtex018s" style="top:50%;transform:translateY(-50%);right:12px;position:absolute;border-radius:4px;background:#fff;padding:4px;cursor:pointer;display:flex;">
+        <svg fill="#000" height="14px" width="14px" viewBox="0 0 490 490"><polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/></svg>
+      </label>
+      <div style="width:100%;margin:auto;">
+        <iframe data-aa='2453787' src='//acceptable.a-ads.com/2453787/?size=Adaptive' style='border:0;width:100%;max-width:320px;height:50px;display:block;margin:auto;border-radius:8px;'></iframe>
+      </div>
+    </div>
+    <style>#aadsstickymtex018s:checked + div{display:none}</style>
+  </div>
+</div>
+<!-- ANUNCIO FIN -->
+<h1>DOMINO ZEXUS</h1>
+<div id="marcador">
+  <div class="scoreBox yo"><span>TU</span><b id="scoreYo">0</b><small id="puntosManoYo">mano: 0</small></div>
+  <div class="scoreBox"><span>META</span><b>100</b><small>para ganar</small></div>
+  <div class="scoreBox bot"><span>BOT</span><b id="scoreBot">0</b><small id="puntosManoBot">mano: 0</small></div>
+</div>
+<div class="turno" id="turno">TU TURNO</div>
+
+<div id="contenedorMesa">
+ <div id="pozo" onclick="robarYo()"><div style="width:35px;height:50px;background:repeating-linear-gradient(45deg,#222,#222 4px,#333 4px,#333 8px);border-radius:4px;border:1px solid #555"></div><span style="font-size:8px;margin-top:4px">ROBAR (<span id="pozoCount">0</span>)</span></div>
+ <div id="mesa" class="vacia">MESA VACIA - TIRA UN DOBLE</div>
+</div>
+
+<div class="info" id="info">Toca 1 vez para seleccionar, 2 veces para tirar. Arrastra la mesa para verla completa.</div>
+<div style="font-size:9px;opacity:0.5;margin-top:8px">BOT - LE QUEDAN <span id="botCount">7</span></div>
+<div id="botArea"></div>
+<div style="font-size:9px;opacity:0.5;margin-top:8px">TU MANO</div>
+<div id="mano"></div>
+<button class="btn" onclick="iniciarMano()">SIGUIENTE MANO</button>
+
+<script>
+const patrones={0:[],1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+function crearMitad(v){let d=document.createElement('div');d.className='mitad';for(let i=0;i<9;i++){let p=document.createElement('div');p.className=patrones[v].includes(i)?'punto':'punto escondido';d.appendChild(p)}return d}
+function crearFichaDOM(f, tipo){
+ let d=document.createElement('div'); d.className='ficha '+tipo;
+ let esDoble=f[0]===f[1];
+ if(tipo.includes('mesa')) d.classList.add(esDoble?'doble':'normal');
+ d.appendChild(crearMitad(f[0])); d.appendChild(crearMitad(f[1]));
+ return d;
+}
+let mano=[], bot=[], mesa=[], mazo=[], extremos=[null,null], selIndex=null, turno='yo';
+let scoreYo=0, scoreBot=0;
+
+function iniciarMano(){
+ let todas=[]; for(let i=0;i<=6;i++) for(let j=i;j<=6;j++) todas.push([i,j]);
+ todas.sort(()=>Math.random()-0.5);
+ mano=todas.splice(0,7); bot=todas.splice(0,7); mazo=todas; mesa=[]; extremos=[null,null]; selIndex=null; turno='yo';
+ render();
+}
+
+function sumaPuntos(arr){ return arr.reduce((s,f)=>s+f[0]+f[1],0); }
+
+function render(){
+ const mesaEl=document.getElementById('mesa'), manoEl=document.getElementById('mano'), botEl=document.getElementById('botArea');
+ mesaEl.innerHTML=''; manoEl.innerHTML=''; botEl.innerHTML='';
+ if(mesa.length===0){mesaEl.classList.add('vacia'); mesaEl.textContent='MESA VACIA - TIRA UN DOBLE';}
+ else {
+  mesaEl.classList.remove('vacia');
+  mesa.forEach(f=> mesaEl.appendChild(crearFichaDOM(f,'mesa')));
+  setTimeout(()=>{ mesaEl.scrollLeft = mesaEl.scrollWidth; }, 50);
+ }
+ mano.forEach((f,i)=>{
+  let el=crearFichaDOM(f,'mano');
+  if(selIndex===i) el.classList.add('sel');
+  el.onclick=()=>{ if(selIndex===i) jugarYo(i); else {selIndex=i; render();} };
+  manoEl.appendChild(el);
+ });
+ bot.forEach(()=>{let el=document.createElement('div');el.className='ficha bot';botEl.appendChild(el);});
+ document.getElementById('botCount').textContent=bot.length;
+ document.getElementById('pozoCount').textContent=mazo.length;
+ document.getElementById('scoreYo').textContent=scoreYo;
+ document.getElementById('scoreBot').textContent=scoreBot;
+ document.getElementById('puntosManoYo').textContent='mano: '+sumaPuntos(mano);
+ document.getElementById('puntosManoBot').textContent='mano: '+sumaPuntos(bot);
+ document.getElementById('turno').textContent=turno==='yo'?'TU TURNO':'TURNO DEL BOT...';
+ document.getElementById('turno').style.background= turno==='yo'? '#ffe600' : '#ff0040';
+
+ // Ganó por quedarse sin fichas
+ if(mano.length===0){ ganarMano('yo'); }
+ if(bot.length===0){ ganarMano('bot'); }
+ // Trancado
+ checkTranca();
+}
+
+function buscarJugada(f){
+ let izq=extremos[0], der=extremos[1];
+ if(f[1]===izq) return {lado:'izq', ficha:[f[0],f[1]], nuevo:f[0]};
+ if(f[0]===izq) return {lado:'izq', ficha:[f[1],f[0]], nuevo:f[1]};
+ if(f[0]===der) return {lado:'der', ficha:[f[0],f[1]], nuevo:f[1]};
+ if(f[1]===der) return {lado:'der', ficha:[f[1],f[0]], nuevo:f[0]};
+ return null;
+}
+
+function jugarYo(idx){
+ if(turno!=='yo') return;
+ let f=mano[idx];
+ if(mesa.length===0){
+  if(f[0]!==f[1]){alert('Empieza con doble'); selIndex=null; render(); return;}
+  mesa.push(f); extremos=[f[0],f[1]]; mano.splice(idx,1); selIndex=null; turno='bot'; render(); setTimeout(jugarBot,600);
+ } else {
+  let jug=buscarJugada(f);
+  if(!jug){alert(`No pega. Necesitas ${extremos[0]} o ${extremos[1]}`); selIndex=null; render(); return;}
+  if(jug.lado==='izq'){mesa.unshift(jug.ficha); extremos[0]=jug.nuevo;} else {mesa.push(jug.ficha); extremos[1]=jug.nuevo;}
+  mano.splice(idx,1); selIndex=null; turno='bot'; render(); setTimeout(jugarBot,600);
+ }
+}
+function robarYo(){
+ if(turno!=='yo') return;
+ if(mazo.length===0){alert('Ya no hay para robar - pasas'); turno='bot'; setTimeout(jugarBot,400); return;}
+ mano.push(mazo.pop()); selIndex=null; render();
+}
+
+function jugarBot(){
+ if(bot.length===0) return;
+ for(let i=0;i<bot.length;i++){
+  let jug=buscarJugada(bot[i]);
+  if(jug){
+   if(jug.lado==='izq'){mesa.unshift(jug.ficha); extremos[0]=jug.nuevo;} else {mesa.push(jug.ficha); extremos[1]=jug.nuevo;}
+   bot.splice(i,1); turno='yo'; render(); return;
+  }
+ }
+ if(mazo.length>0){ bot.push(mazo.pop()); render(); setTimeout(jugarBot,500); }
+ else { turno='yo'; render(); }
+}
+
+function ganarMano(ganador){
+ let puntosBot=sumaPuntos(bot);
+ let puntosYo=sumaPuntos(mano);
+ let pts=0;
+ if(ganador==='yo'){ pts=puntosBot; scoreYo+=pts; alert(`¡Ganaste la mano! Te llevas ${pts} pts del bot`); }
+ else { pts=puntosYo; scoreBot+=pts; alert(`Perdiste la mano. Bot se lleva ${pts} pts tuyos`); }
+ if(scoreYo>=100) setTimeout(()=>alert('¡GANASTE LA PARTIDA DE 100!'),100);
+ if(scoreBot>=100) setTimeout(()=>alert('PERDISTE LA PARTIDA - BOT LLEGO A 100'),100);
+ setTimeout(iniciarMano, 500);
+}
+
+function checkTranca(){
+ if(mesa.length===0) return;
+ if(mazo.length>0) return;
+ // si nadie puede jugar
+ let yoPuede = mano.some(f=>buscarJugada(f));
+ let botPuede = bot.some(f=>buscarJugada(f));
+ if(!yoPuede &&!botPuede){
+   let pYo=sumaPuntos(mano), pBot=sumaPuntos(bot);
+   if(pYo < pBot){ scoreYo+=pBot; alert(`¡JUEGO TRANCADO! Tu tienes ${pYo} y bot ${pBot}. Ganas tu y te llevas ${pBot}`); }
+   else if(pBot < pYo){ scoreBot+=pYo; alert(`¡JUEGO TRANCADO! Tu tienes ${pYo} y bot ${pBot}. Gana bot y se lleva ${pYo}`); }
+   else { alert(`¡JUEGO TRANCADO EMPATE! ${pYo} vs ${pBot} - nadie suma`); }
+   if(scoreYo>=100 || scoreBot>=100){
+     if(scoreYo>=100) alert('¡GANASTE LA PARTIDA!');
+     else alert('PERDISTE LA PARTIDA');
+     scoreYo=0; scoreBot=0;
+   }
+   setTimeout(iniciarMano,500);
+ }
+}
+
+const mesaEl=document.getElementById('mesa');
+let isDown=false,startX,scrollLeft;
+mesaEl.addEventListener('mousedown', e=>{isDown=true; startX=e.pageX-mesaEl.offsetLeft; scrollLeft=mesaEl.scrollLeft;});
+mesaEl.addEventListener('mouseleave', ()=>{isDown=false;}); mesaEl.addEventListener('mouseup', ()=>{isDown=false;});
+mesaEl.addEventListener('mousemove', e=>{if(!isDown) return; e.preventDefault(); const x=e.pageX-mesaEl.offsetLeft; const walk=(x-startX)*2; mesaEl.scrollLeft=scrollLeft-walk;});
+mesaEl.addEventListener('touchstart', e=>{startX=e.touches[0].pageX-mesaEl.offsetLeft; scrollLeft=mesaEl.scrollLeft;});
+mesaEl.addEventListener('touchmove', e=>{const x=e.touches[0].pageX-mesaEl.offsetLeft; const walk=(x-startX)*2; mesaEl.scrollLeft=scrollLeft-walk;});
+
+iniciarMano();
+</script>
+</body>
+</html>

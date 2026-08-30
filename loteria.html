@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LOTERIA ZEXUS MOBILE</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color: transparent;}
+body{background:#080808;color:#fff;font-family:'Space Mono',monospace;min-height:100vh;padding:0 0 90px 0;touch-action: manipulation;}
+
+header{position:sticky;top:0;z-index:20;background:#080808;padding:10px 12px;border-bottom:2px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Anton';font-size:22px;letter-spacing:1px;line-height:1}
+.logo span{color:#ffe600}
+#scoreMini{font-size:11px;background:#111;padding:6px 10px;border-radius:20px;border:1px solid #222}
+#scoreMini b{color:#ffe600}
+
+#cantador{position:sticky;top:56px;z-index:19;background:#111;border-bottom:3px solid #ffe600;padding:10px 12px;display:flex;gap:10px;align-items:center}
+#cartaGrande{width:78px;height:105px;background:#fff;color:#000;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2.5px solid #000;flex-shrink:0;text-align:center}
+#cartaGrande b{font-size:34px} #cartaGrande small{font-size:8px;font-weight:900;letter-spacing:0.5px;line-height:1}
+#datos{flex:1;min-width:0}
+#nombreCarta{font-family:'Anton';font-size:18px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#barra{width:100%;height:6px;background:#222;border-radius:10px;margin:6px 0;overflow:hidden}
+#barraProgreso{height:100%;background:#ffe600;width:0%;transition:0.3s}
+.historial{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.historial::-webkit-scrollbar{display:none}
+.historial span{flex-shrink:0;font-size:9px;background:#1f1f1f;padding:3px 7px;border-radius:12px;border:1px solid #2a2a2a;white-space:nowrap}
+
+#tabs{display:flex;gap:8px;padding:10px 12px;overflow-x:auto}
+.tabBtn{padding:8px 14px;border-radius:20px;border:1px solid #222;background:#111;color:#fff;font-size:11px;white-space:nowrap;font-weight:700}
+.tabBtn.activo{background:#ffe600;color:#000;border-color:#ffe600}
+
+.tablero{display:none;padding:0 10px 10px 10px}
+.tablero.activo{display:block}
+.tableroHead{display:flex;justify-content:space-between;font-size:10px;letter-spacing:1.5px;opacity:0.6;margin:8px 2px}
+.gridTabla{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.carta{aspect-ratio:3/4.2;background:#fefefe;color:#000;border-radius:12px;border:2.5px solid #000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px;position:relative}
+.carta b{font-size:28px;line-height:1} .carta small{font-size:7px;font-weight:900;margin-top:2px;line-height:1}
+.carta.marcada{background:#00ff88;border-color:#00ff88;transform:scale(0.96)}
+.carta.marcada::after{content:'✓';position:absolute;top:-7px;right:-7px;background:#000;color:#00ff88;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:13px;border:2px solid #00ff88;font-weight:900}
+.carta.bot-marcada{background:#222;color:#666;border-color:#333}
+.carta.cantada{box-shadow:0 0 0 3px #ffe600}
+
+#controlesFijos{position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;border-top:2px solid #1f1f1f;padding:10px 12px;display:flex;gap:8px;z-index:30;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+.btn{flex:1;padding:14px 10px;border:none;border-radius:12px;font-weight:900;font-family:'Anton';letter-spacing:1px;font-size:14px}
+.btn.amarillo{background:#ffe600;color:#000}
+.btn.blanco{background:#fff;color:#000}
+.btn.rojo{background:#ff0040;color:#fff;font-size:18px}
+</style>
+</head>
+<body>
+<!-- ANUNCIO STICKY A-ADS 2453787 - INICIO -->
+<div style="position: absolute; z-index: 99999">
+  <input autocomplete="off" type="checkbox" id="aadsstickymtex018s" hidden />
+  <div>
+    <div style="width:100%;height:auto;position:fixed;text-align:center;top:0;left:0;right:0;margin:auto; background:#0f0f0f; padding:8px 40px 8px 5px; border-bottom:1px solid #222; z-index:99999">
+      <label for="aadsstickymtex018s" style="top:50%;transform:translateY(-50%);right:12px;position:absolute;border-radius:4px;background:#fff;padding:4px;cursor:pointer;display:flex;">
+        <svg fill="#000" height="14px" width="14px" viewBox="0 0 490 490"><polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/></svg>
+      </label>
+      <div style="width:100%;margin:auto;">
+        <iframe data-aa='2453787' src='//acceptable.a-ads.com/2453787/?size=Adaptive' style='border:0;width:100%;max-width:320px;height:50px;display:block;margin:auto;border-radius:8px;'></iframe>
+      </div>
+    </div>
+    <style>#aadsstickymtex018s:checked + div{display:none}</style>
+  </div>
+</div>
+<!-- ANUNCIO FIN -->
+<header>
+  <div class="logo">LOTERIA <span>ZEXUS</span></div>
+  <div id="scoreMini">TU: <b id="sYo">0</b> | BOT: <b id="sBot">0</b></div>
+</header>
+
+<div id="cantador">
+  <div id="cartaGrande"><b>?</b><small>LISTO</small></div>
+  <div id="datos">
+    <div id="nombreCarta">¡ARMA TU TABLA!</div>
+    <div id="barra"><div id="barraProgreso"></div></div>
+    <div class="historial" id="historial"></div>
+  </div>
+</div>
+
+<div id="tabs">
+  <button class="tabBtn activo" onclick="cambiarTab('yo')">TU TABLA (<span id="pYo">0/16</span>)</button>
+  <button class="tabBtn" onclick="cambiarTab('bot1')">BOT 1 (<span id="pB1">0/16</span>)</button>
+  <button class="tabBtn" onclick="cambiarTab('bot2')">BOT 2 (<span id="pB2">0/16</span>)</button>
+</div>
+
+<div id="tab-yo" class="tablero activo">
+  <div class="tableroHead"><span>TU TABLA - TOCA PARA MARCAR</span><span>4x4</span></div>
+  <div class="gridTabla" id="tablaYo"></div>
+</div>
+<div id="tab-bot1" class="tablero">
+  <div class="tableroHead"><span>BOT 1 - EL TIO</span></div>
+  <div class="gridTabla" id="tablaBot1"></div>
+</div>
+<div id="tab-bot2" class="tablero">
+  <div class="tableroHead"><span>BOT 2 - LA MORRA</span></div>
+  <div class="gridTabla" id="tablaBot2"></div>
+</div>
+
+<div id="controlesFijos">
+  <button class="btn blanco" onclick="nuevaTabla()">TABLA</button>
+  <button class="btn amarillo" id="btnCantar" onclick="cantar()">CANTAR ▶</button>
+  <button class="btn rojo" onclick="gritarLoteria()">¡LOTERIA!</button>
+</div>
+
+<script>
+const LOTERIA = [
+{id:1,n:'EL GALLO',e:'🐓'},{id:2,n:'EL DIABLITO',e:'😈'},{id:3,n:'LA DAMA',e:'💃'},{id:4,n:'EL CATRIN',e:'🎩'},{id:5,n:'EL PARAGUAS',e:'☂️'},{id:6,n:'LA SIRENA',e:'🧜‍♀️'},{id:7,n:'LA ESCALERA',e:'🪜'},{id:8,n:'LA BOTELLA',e:'🍾'},{id:9,n:'EL BARRIL',e:'🛢️'},{id:10,n:'EL ARBOL',e:'🌳'},{id:11,n:'EL MELON',e:'🍈'},{id:12,n:'EL VALIENTE',e:'🤺'},{id:13,n:'EL GORRITO',e:'🧢'},{id:14,n:'LA MUERTE',e:'💀'},{id:15,n:'LA PERA',e:'🍐'},{id:16,n:'LA BANDERA',e:'🚩'},{id:17,n:'EL BANDOLON',e:'🎸'},{id:18,n:'EL VIOLONCHELO',e:'🎻'},{id:19,n:'LA GARZA',e:'🦩'},{id:20,n:'EL PAJARO',e:'🐦'},{id:21,n:'LA MANO',e:'✋'},{id:22,n:'LA BOTA',e:'👢'},{id:23,n:'LA LUNA',e:'🌙'},{id:24,n:'EL COTORRO',e:'🦜'},{id:25,n:'EL BORRACHO',e:'🥴'},{id:26,n:'EL NEGRITO',e:'👶🏿'},{id:27,n:'EL CORAZON',e:'❤️'},{id:28,n:'LA SANDIA',e:'🍉'},{id:29,n:'EL TAMBOR',e:'🥁'},{id:30,n:'EL CAMARON',e:'🦐'},{id:31,n:'LAS JARAS',e:'🏹'},{id:32,n:'EL MUSICO',e:'🎺'},{id:33,n:'LA ARAÑA',e:'🕷️'},{id:34,n:'EL SOLDADO',e:'🪖'},{id:35,n:'LA ESTRELLA',e:'⭐'},{id:36,n:'EL CAZO',e:'🍲'},{id:37,n:'EL MUNDO',e:'🌎'},{id:38,n:'EL APACHE',e:'🪶'},{id:39,n:'EL NOPAL',e:'🌵'},{id:40,n:'EL ALACRAN',e:'🦂'},{id:41,n:'LA ROSA',e:'🌹'},{id:42,n:'LA CALAVERA',e:'💀'},{id:43,n:'LA CAMPANA',e:'🔔'},{id:44,n:'EL CANTARITO',e:'🏺'},{id:45,n:'EL VENADO',e:'🦌'},{id:46,n:'EL SOL',e:'☀️'},{id:47,n:'LA CORONA',e:'👑'},{id:48,n:'LA CHALUPA',e:'🛶'},{id:49,n:'EL PINO',e:'🎄'},{id:50,n:'EL PESCADO',e:'🐟'},{id:51,n:'LA PALMA',e:'🌴'},{id:52,n:'LA MACETA',e:'🪴'},{id:53,n:'EL ARPA',e:'🎼'},{id:54,n:'LA RANA',e:'🐸'}
+];
+let mazo=[], cantadas=[], tablaYo=[], tablaBot1=[], tablaBot2=[], intervalo=null, jugando=false;
+let scoreYo=0, scoreBot=0;
+
+function generarTabla(){return [...LOTERIA].sort(()=>Math.random()-0.5).slice(0,16).map(c=>({...c,marcada:false}))}
+
+function render(){
+ let crear = (id, tabla, tipo) => {
+  let cont=document.getElementById(id); cont.innerHTML='';
+  tabla.forEach(c=>{
+    let d=document.createElement('div'); d.className='carta';
+    if(c.marcada) d.classList.add(tipo==='yo'?'marcada':'bot-marcada');
+    if(cantadas[cantadas.length-1]?.id===c.id) d.classList.add('cantada');
+    d.innerHTML=`<b>${c.e}</b><small>${c.n}</small>`;
+    if(tipo==='yo'){
+      d.onclick=()=>{
+        if(!cantadas.find(x=>x.id===c.id)){ navigator.vibrate?.(50); return; }
+        c.marcada=!c.marcada; navigator.vibrate?.(30); render();
+      };
+    }
+    cont.appendChild(d);
+  });
+ };
+ crear('tablaYo',tablaYo,'yo'); crear('tablaBot1',tablaBot1,'bot'); crear('tablaBot2',tablaBot2,'bot');
+ document.getElementById('pYo').textContent=tablaYo.filter(x=>x.marcada).length+'/16';
+ document.getElementById('pB1').textContent=tablaBot1.filter(x=>x.marcada).length+'/16';
+ document.getElementById('pB2').textContent=tablaBot2.filter(x=>x.marcada).length+'/16';
+ document.getElementById('sYo').textContent=scoreYo; document.getElementById('sBot').textContent=scoreBot;
+ document.getElementById('barraProgreso').style.width=(cantadas.length/54*100)+'%';
+ document.getElementById('historial').innerHTML=cantadas.slice(-10).map(c=>`<span>${c.e}</span>`).join('');
+ if(cantadas.length>0){
+  let u=cantadas[cantadas.length-1];
+  document.getElementById('cartaGrande').innerHTML=`<b>${u.e}</b><small>${u.n}</small>`;
+  document.getElementById('nombreCarta').textContent=u.n;
+ }
+ if(tablaBot1.filter(x=>x.marcada).length===16) fin('bot1');
+ if(tablaBot2.filter(x=>x.marcada).length===16) fin('bot2');
+}
+
+function cambiarTab(t){
+ document.querySelectorAll('.tablero').forEach(x=>x.classList.remove('activo'));
+ document.querySelectorAll('.tabBtn').forEach(x=>x.classList.remove('activo'));
+ document.getElementById('tab-'+t).classList.add('activo');
+ event.target.classList.add('activo');
+}
+
+function nuevaTabla(){
+ clearInterval(intervalo); jugando=false;
+ document.getElementById('btnCantar').textContent='CANTAR ▶';
+ mazo=[...LOTERIA].sort(()=>Math.random()-0.5); cantadas=[];
+ tablaYo=generarTabla(); tablaBot1=generarTabla(); tablaBot2=generarTabla();
+ document.getElementById('cartaGrande').innerHTML='<b>?</b><small>NUEVA</small>';
+ document.getElementById('nombreCarta').textContent='¡TABLA NUEVA!';
+ render();
+}
+
+function cantar(){
+ if(jugando){clearInterval(intervalo);jugando=false;document.getElementById('btnCantar').textContent='CANTAR ▶';return;}
+ if(mazo.length===0){alert('Se acabó');return;}
+ jugando=true; document.getElementById('btnCantar').textContent='PAUSA ⏸';
+ intervalo=setInterval(()=>{
+  if(mazo.length===0){clearInterval(intervalo);jugando=false;return;}
+  let carta=mazo.pop(); cantadas.push(carta);
+  [tablaBot1,tablaBot2].forEach(tab=>{let f=tab.find(x=>x.id===carta.id); if(f && Math.random()>0.2) f.marcada=true;});
+  render();
+ },1600);
+}
+
+function gritarLoteria(){
+ if(tablaYo.filter(x=>x.marcada).length===16){
+  if(!tablaYo.every(c=> !c.marcada || cantadas.find(x=>x.id===c.id))){alert('Marcaste una que no ha salido');return;}
+  fin('yo');
+ } else {
+  let faltan=16-tablaYo.filter(x=>x.marcada).length;
+  alert(`Te faltan ${faltan} - no grites aún`);
+  navigator.vibrate?.([50,50,50]);
+ }
+}
+
+function fin(g){
+ clearInterval(intervalo);jugando=false;
+ document.getElementById('btnCantar').textContent='CANTAR ▶';
+ if(g==='yo'){scoreYo+=10;navigator.vibrate?.(200);alert('¡LOTERÍA! +$5');}
+ else{scoreBot+=10;alert(`Ganó ${g.toUpperCase()}`);}
+ if(scoreYo>=100||scoreBot>=100){alert(scoreYo>=100?'¡GANASTE LA PARTIDA!':'Perdiste');scoreYo=0;scoreBot=0;}
+ setTimeout(nuevaTabla,700);
+}
+nuevaTabla();
+</script>
+</body>
+</html>
